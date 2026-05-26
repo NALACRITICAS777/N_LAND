@@ -749,32 +749,39 @@ padding:40px 22px;
 }
 
 
-/* NALA CORNER ANIMATION */
-
+/* NALA CORNER WIDGET */
 .nala-corner{
 position:fixed;
-right:16px;
-bottom:16px;
-width:clamp(120px, 12vw, 170px);
-height:auto;
-z-index:10000;
+right:22px;
+bottom:22px;
+width:150px;
+max-width:22vw;
+min-width:110px;
+z-index:100000;
 cursor:pointer;
 user-select:none;
-image-rendering:auto;
+pointer-events:auto;
+transition:transform .2s ease, filter .2s ease;
 filter:drop-shadow(0 10px 18px rgba(0,0,0,.35));
-transition:transform .18s ease, filter .18s ease;
 }
 
 .nala-corner:hover{
-transform:translateY(-4px) scale(1.02);
-filter:drop-shadow(0 14px 22px rgba(0,0,0,.45));
+transform:translateY(-3px) scale(1.03);
+}
+
+.nala-corner img{
+display:block;
+width:100%;
+height:auto;
+image-rendering:auto;
+pointer-events:none;
 }
 
 @media (max-width:700px){
 .nala-corner{
-right:10px;
-bottom:10px;
-width:clamp(96px, 28vw, 130px);
+width:110px;
+right:14px;
+bottom:14px;
 }
 }
 
@@ -1247,31 +1254,33 @@ particles.appendChild(pixel);
 
 }
 
+</script>
 
+
+<div class="nala-corner" id="nalaCorner" aria-label="Nala">
+  <img id="nalaImg" src="nala_1.png" alt="Nala">
+</div>
+
+
+<script>
+
+// NALA CORNER SWAP
 const nalaCorner = document.getElementById("nalaCorner");
+const nalaImg = document.getElementById("nalaImg");
+const nala1 = "nala_1.png";
+const nala2 = "nala_2.png";
 
-if (nalaCorner) {
+if (nalaCorner && nalaImg) {
+  nalaImg.src = nala1;
   nalaCorner.addEventListener("mouseenter", () => {
-    nalaCorner.src = nalaCorner.dataset.hover;
+    nalaImg.src = nala2;
   });
-
   nalaCorner.addEventListener("mouseleave", () => {
-    nalaCorner.src = nalaCorner.dataset.default;
+    nalaImg.src = nala1;
   });
 }
 
 </script>
-
-
-<img
-  id="nalaCorner"
-  class="nala-corner"
-  src="nala_1.png"
-  data-default="nala_1.png"
-  data-hover="nala_2.png"
-  alt="Nala"
-/>
-
 
 </body>
 </html>
