@@ -2,80 +2,214 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>N_LAND | Comunidad Luis</title>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Rajdhani:wght@500&display=swap');
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>N_LAND | Servidor Épico</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Black+Ops+One&family=Montserrat:wght@400;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
+    <style>
         :root {
-            --bg: #050508;
-            --accent: #53fc18;
-            --panel: rgba(15, 15, 20, 0.9);
-            --font-main: 'Orbitron', sans-serif;
+            --bg-color: #050508;
+            --kick-green: #53fc18;
+            --yt-red: #ff0000;
+            --ig-grad: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
+            --glass-bg: rgba(20, 20, 25, 0.6);
+            --glass-border: rgba(255, 255, 255, 0.1);
         }
 
-        body { margin: 0; background: var(--bg); color: white; font-family: 'Rajdhani', sans-serif; scroll-behavior: smooth; }
-        
-        /* Fondo */
-        .bg-img { position: fixed; top:0; left:0; width: 100%; height: 100%; z-index: -1; 
-                  background: url('https://preview.redd.it/nala-estaba-sufriendo-jsjjsjaj-v0-2ivvf8feb0ke1.jpeg?auto=webp&s=4dd8ae471d1c5cb0f13178d8b31fe2428d7116d1') no-repeat center center; 
-                  background-size: cover; opacity: 0.2; }
+        /* Desplazamiento suave fundamental */
+        html { scroll-behavior: smooth; }
 
-        /* Menú y Navegación */
-        .menu-toggle { position: fixed; top: 20px; right: 20px; z-index: 1000; cursor: pointer; font-size: 30px; }
-        .nav-panel { position: fixed; top: 0; right: -300px; width: 280px; height: 100vh; background: var(--panel); transition: 0.4s; border-left: 2px solid var(--accent); z-index: 999; padding-top: 100px; }
-        .nav-panel a { display: block; padding: 20px; color: white; text-decoration: none; font-size: 1.5rem; text-transform: uppercase; border-bottom: 1px solid #222; }
-        .nav-panel a:hover { background: var(--accent); color: black; }
+        body { 
+            margin: 0; font-family: 'Montserrat', sans-serif; 
+            background-color: var(--bg-color); color: white; overflow-x: hidden;
+        }
 
-        /* Estilo de Secciones */
-        section { min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; clip-path: polygon(0 5%, 100% 0, 100% 95%, 0 100%); background: rgba(0,0,0,0.4); margin: 20px 0; }
-        h1 { font-family: var(--font-main); font-size: 4rem; color: var(--accent); text-transform: uppercase; }
+        /* Fondo Parallax Estilo Karmaland */
+        .parallax-bg {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;
+            background: url('https://preview.redd.it/nala-estaba-sufriendo-jsjjsjaj-v0-2ivvf8feb0ke1.jpeg?auto=webp&s=4dd8ae471d1c5cb0f13178d8b31fe2428d7116d1') no-repeat center center;
+            background-size: cover; filter: brightness(0.4) blur(3px);
+        }
+
+        /* Botón del Menú */
+        .menu-btn {
+            position: fixed; top: 30px; right: 30px; z-index: 1000;
+            background: var(--glass-bg); backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border); padding: 15px;
+            border-radius: 12px; cursor: pointer; color: white; font-size: 24px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5); transition: 0.3s;
+        }
+        .menu-btn:hover { transform: scale(1.1); border-color: var(--kick-green); color: var(--kick-green); }
+
+        /* Menú Lateral Elegante (Solo derecha) */
+        .sidebar {
+            position: fixed; top: 0; right: -350px; width: 300px; height: 100vh;
+            background: rgba(10, 10, 15, 0.95); backdrop-filter: blur(20px);
+            border-left: 1px solid var(--glass-border); z-index: 999;
+            transition: right 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex; flex-direction: column; padding-top: 100px;
+            box-shadow: -10px 0 30px rgba(0,0,0,0.8);
+        }
+        .sidebar.active { right: 0; }
+        .sidebar a {
+            color: white; text-decoration: none; font-size: 1.2rem; font-weight: 700;
+            padding: 20px 40px; border-bottom: 1px solid rgba(255,255,255,0.05);
+            transition: 0.3s; text-transform: uppercase; letter-spacing: 2px;
+        }
+        .sidebar a:hover {
+            background: rgba(83, 252, 24, 0.1); color: var(--kick-green); padding-left: 50px;
+        }
+
+        /* Contenedores de Secciones (Efecto Cristal) */
+        section {
+            min-height: 100vh; display: flex; flex-direction: column;
+            align-items: center; justify-content: center; padding: 20px;
+        }
+        .glass-card {
+            background: var(--glass-bg); backdrop-filter: blur(15px);
+            border: 1px solid var(--glass-border); border-radius: 20px;
+            padding: 50px; text-align: center; max-width: 800px; width: 90%;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+            animation: float 6s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+
+        /* Títulos */
+        h1.main-title {
+            font-family: 'Black Ops One', cursive; font-size: clamp(4rem, 8vw, 7rem);
+            margin: 0 0 10px 0; color: white;
+            text-shadow: 0 0 20px rgba(83, 252, 24, 0.6), 5px 5px 0px #111;
+            letter-spacing: 5px;
+        }
+        h2.section-title {
+            font-size: 2.5rem; color: var(--kick-green); margin-bottom: 20px;
+            text-transform: uppercase; font-weight: 900;
+        }
+
+        /* Botones y Redes Sociales */
+        .social-container {
+            display: flex; gap: 20px; justify-content: center; margin-top: 30px;
+        }
+        .social-icon {
+            width: 60px; height: 60px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 30px; color: white; text-decoration: none;
+            transition: 0.3s ease; box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+        .social-icon:hover { transform: translateY(-5px) scale(1.1); }
         
-        .btn-social { padding: 15px 40px; margin: 10px; background: transparent; border: 2px solid var(--accent); color: var(--accent); font-weight: bold; text-decoration: none; font-size: 1.2rem; transition: 0.3s; }
-        .btn-social:hover { background: var(--accent); color: black; }
+        .icon-kick { background-color: var(--kick-green); color: black; }
+        .icon-kick:hover { box-shadow: 0 10px 20px rgba(83, 252, 24, 0.4); }
+        
+        .icon-yt { background-color: var(--yt-red); }
+        .icon-yt:hover { box-shadow: 0 10px 20px rgba(255, 0, 0, 0.4); }
+        
+        .icon-ig { background: var(--ig-grad); }
+        .icon-ig:hover { box-shadow: 0 10px 20px rgba(220, 39, 67, 0.4); }
+
+        /* Botón de acción (Mods/IP) */
+        .btn-action {
+            display: inline-block; padding: 15px 40px; background: rgba(0,0,0,0.5);
+            border: 2px solid var(--kick-green); color: white; font-weight: bold;
+            font-size: 1.2rem; border-radius: 50px; text-decoration: none;
+            transition: 0.3s; margin-top: 20px; cursor: pointer;
+        }
+        .btn-action:hover {
+            background: var(--kick-green); color: black; box-shadow: 0 0 20px rgba(83, 252, 24, 0.5);
+        }
+        
+        .ip-text { font-family: monospace; font-size: 2rem; font-weight: bold; color: white; }
     </style>
 </head>
 <body>
 
-<div class="bg-img"></div>
+<div class="parallax-bg"></div>
 
-<div class="menu-toggle" onclick="toggleNav()">☰</div>
-<div class="nav-panel" id="nav">
-    <a href="#home">Home</a>
-    <a href="#ip">IP Servidor</a>
-    <a href="#mods">Descarga Mods</a>
-    <a href="#preguntas">Preguntas</a>
+<div class="menu-btn" onclick="toggleSidebar()">
+    <i class="fas fa-bars"></i>
 </div>
 
-<section id="home">
-    <h1>N_LAND</h1>
-    <p>Comunidad oficial de Luisardito</p>
-    <div>
-        <a href="https://kick.com/luisardito" class="btn-social">KICK</a>
-        <a href="https://www.youtube.com/@Luisarditoprime" class="btn-social">YOUTUBE</a>
-        <a href="https://www.instagram.com/luisarditooo" class="btn-social">INSTAGRAM</a>
+<div class="sidebar" id="sidebar">
+    <a href="#inicio" onclick="toggleSidebar()">🏠 Inicio</a>
+    <a href="#servidor" onclick="toggleSidebar()">🎮 El Servidor</a>
+    <a href="#descargas" onclick="toggleSidebar()">📦 Mods</a>
+    <a href="#reglas" onclick="toggleSidebar()">📜 Reglas</a>
+</div>
+
+<section id="inicio">
+    <div class="glass-card">
+        <h1 class="main-title">N_LAND</h1>
+        <p style="font-size: 1.2rem; color: #ccc;">LA COMUNIDAD OFICIAL DE LUISARDITO</p>
+        
+        <div class="social-container">
+            <a href="https://kick.com/luisardito" target="_blank" class="social-icon icon-kick" title="Kick">
+                <i class="fa-brands fa-kickstarter-k"></i> </a>
+            <a href="https://www.youtube.com/@Luisarditoprime" target="_blank" class="social-icon icon-yt" title="YouTube">
+                <i class="fa-brands fa-youtube"></i>
+            </a>
+            <a href="https://www.instagram.com/luisarditooo" target="_blank" class="social-icon icon-ig" title="Instagram">
+                <i class="fa-brands fa-instagram"></i>
+            </a>
+        </div>
     </div>
 </section>
 
-<section id="ip">
-    <h2>IP DEL SERVIDOR</h2>
-    <h1 style="font-size: 2rem;">N_LAND.aternos.me:20942</h1>
+<section id="servidor">
+    <div class="glass-card">
+        <h2 class="section-title">Ingresa a N_LAND</h2>
+        <p>Copia la IP y únete al servidor de Minecraft Java 1.20.1</p>
+        <div class="ip-text" style="margin: 20px 0;">N_LAND.aternos.me:20942</div>
+        <button class="btn-action" onclick="copiarIP()">COPIAR IP <i class="fas fa-copy"></i></button>
+    </div>
 </section>
 
-<section id="mods">
-    <h2>MODS</h2>
-    <p>Descarga el pack necesario para el servidor.</p>
-    <a href="#" class="btn-social">DESCARGAR .RAR</a>
+<section id="descargas">
+    <div class="glass-card">
+        <h2 class="section-title">Mods Oficiales</h2>
+        <p>Para entrar necesitas nuestro pack de mods optimizados y emotes exclusivos de la comunidad.</p>
+        <a href="#" class="btn-action">DESCARGAR .RAR <i class="fas fa-download"></i></a>
+    </div>
 </section>
 
-<section id="preguntas">
-    <h2>PREGUNTAS</h2>
-    <p>¿Tienes dudas? Consulta nuestras FAQs.</p>
+<section id="reglas">
+    <div class="glass-card">
+        <h2 class="section-title">Normativa</h2>
+        <p style="text-align: left; color: #ddd; line-height: 1.6;">
+            1. Prohibido el griefing masivo en zonas seguras.<br>
+            2. Respeta a los demás miembros del chat.<br>
+            3. No usar hacks o clientes modificados (X-Ray, etc).<br>
+            4. Diviértete y apoya a la comunidad.
+        </p>
+    </div>
 </section>
 
 <script>
-    function toggleNav() {
-        const nav = document.getElementById("nav");
-        nav.style.right = nav.style.right === "0px" ? "-300px" : "0px";
+    // Función para abrir/cerrar el menú
+    function toggleSidebar() {
+        const sidebar = document.getElementById("sidebar");
+        sidebar.classList.toggle("active");
+    }
+
+    // Cerrar menú si haces clic fuera de él
+    document.addEventListener('click', function(event) {
+        const sidebar = document.getElementById('sidebar');
+        const menuBtn = document.querySelector('.menu-btn');
+        if (!sidebar.contains(event.target) && !menuBtn.contains(event.target)) {
+            sidebar.classList.remove('active');
+        }
+    });
+
+    // Función para copiar la IP bonito
+    function copiarIP() {
+        navigator.clipboard.writeText("N_LAND.aternos.me:20942");
+        alert("¡IP copiada! Nos vemos en N_LAND.");
     }
 </script>
 
