@@ -3,666 +3,96 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>N_LAND | Hub y Comentarios</title>
-    <link rel="icon" href="https://static-cdn.jtvnw.net/jtv_user_pictures/3f87bd40-3b9a-40e0-8501-0e6c4040dc0c-profile_image-300x300.png" type="image/png">
-    <link href="https://fonts.googleapis.com/css2?family=Black+Ops+One&display=swap" rel="stylesheet">
-    
+    <title>N_LAND | Servidor Minecraft</title>
     <style>
         :root {
             --bg: #030305;
-            --card-bg: rgba(15, 15, 25, 0.85);
-            --kick: #53fc18;
-            --yt: #ff0000;
-            --accent: #7d5fff;
-            --tomato: #ff4d4d;
+            --accent: #53fc18; /* Color verde tipo Minecraft */
+            --text: #ffffff;
+            --overlay: rgba(0, 0, 0, 0.85);
         }
 
-        ::-webkit-scrollbar { width: 8px; }
-        ::-webkit-scrollbar-track { background: var(--bg); }
-        ::-webkit-scrollbar-thumb { background: #333; border-radius: 10px; }
-
-        body {
-            font-family: 'Segoe UI', system-ui, sans-serif;
-            background-color: var(--bg);
-            color: white;
-            margin: 0;
-            display: flex;
-            justify-content: center;
-            min-height: 100vh;
-            padding: 20px;
-            overflow-x: hidden;
-            position: relative;
-        }
-
-        body::before {
-            content: "";
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+        body, html {
+            margin: 0; padding: 0; height: 100%;
+            font-family: 'Segoe UI', sans-serif;
+            background: var(--bg); color: var(--text);
             background: url('https://preview.redd.it/nala-estaba-sufriendo-jsjjsjaj-v0-2ivvf8feb0ke1.jpeg?auto=webp&s=4dd8ae471d1c5cb0f13178d8b31fe2428d7116d1') no-repeat center center fixed;
-            background-size: cover; opacity: 0.35;
-            filter: blur(2px); z-index: -1;
+            background-size: cover;
         }
 
-        .orb { position: fixed; border-radius: 50%; filter: blur(80px); z-index: -2; animation: float 15s infinite ease-in-out alternate; }
-        .orb-1 { width: 35vw; height: 35vw; background: rgba(125, 95, 255, 0.12); top: -10%; left: -10%; }
-        .orb-2 { width: 45vw; height: 45vw; background: rgba(0, 242, 254, 0.08); bottom: -10%; right: -10%; }
-
-        @keyframes float { 100% { transform: translateY(30px) translateX(30px); } }
-
-        @keyframes glitch {
-            0% { text-shadow: 2px 0 var(--yt), -2px 0 var(--accent); transform: translate(0); }
-            20% { text-shadow: -2px 0 var(--kick), 2px 0 var(--yt); transform: translate(-1px, 1px); }
-            40% { text-shadow: 2px 0 var(--accent), -2px 0 var(--kick); transform: translate(-1px,-1px); }
-            100% { text-shadow: -2px 0 var(--accent), 2px 0 var(--kick); transform: translate(0); }
+        /* Menú Hamburguesa */
+        .menu-btn {
+            position: fixed; top: 20px; right: 20px; z-index: 100;
+            cursor: pointer; background: rgba(0,0,0,0.6); padding: 15px; border-radius: 8px;
         }
+        .menu-btn div { width: 25px; height: 3px; background: white; margin: 5px 0; }
 
-        .logo {
-            font-size: clamp(2.5rem, 8vw, 4rem);
-            font-weight: 900; letter-spacing: 10px;
-            background: linear-gradient(to bottom, #fff, var(--accent));
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-            text-transform: uppercase; animation: glitch 0.3s infinite linear;
-            margin-bottom: 10px;
-        }
-
-        .container { width: 100%; max-width: 650px; z-index: 1; display: flex; flex-direction: column; align-items: center; }
-        
-        .social-links { display: flex; gap: 15px; margin: 10px 0 30px 0; justify-content: center; width: 100%; flex-wrap: wrap; }
-        .social-btn { padding: 10px 20px; border-radius: 20px; text-decoration: none; font-weight: 900; font-size: 0.9rem; text-transform: uppercase; transition: 0.3s ease; }
-        .social-btn:hover { transform: translateY(-3px); box-shadow: 0 5px 15px rgba(255,255,255,0.1); }
-        .btn-kick { background: var(--kick); color: black; }
-        .btn-yt { background: var(--yt); color: white; }
-        .btn-ig { background: linear-gradient(45deg, #f09433, #bc1888); color: white; }
-
-        .menu-toggle {
-            position: fixed; top: 25px; right: 25px; z-index: 1001;
-            background: var(--card-bg); border: 1px solid rgba(255,255,255,0.1);
-            padding: 12px; border-radius: 12px; cursor: pointer; display: flex;
-            flex-direction: column; gap: 5px;
-        }
-        .menu-toggle span { display: block; width: 25px; height: 3px; background: white; border-radius: 2px; }
-
-        .top-section {
-            position: fixed; top: 0; right: -320px; width: 300px; height: 100vh;
-            background: rgba(10, 10, 20, 0.98); backdrop-filter: blur(20px);
-            z-index: 1000; padding: 80px 20px 20px; box-sizing: border-box; transition: 0.5s cubic-bezier(0.4, 0, 0.2, 1); overflow-y: auto;
-        }
-        .top-section.active { right: 0; }
-        .top-box { background: rgba(255, 255, 255, 0.03); border-radius: 15px; padding: 15px; margin-bottom: 20px; border: 1px solid rgba(255,255,255,0.05); }
-        .top-box h3 { font-size: 0.8rem; margin-top: 0; color: #aaa; text-transform: uppercase; letter-spacing: 1px; }
-        .top-item { font-size: 0.75rem; background: rgba(0, 0, 0, 0.3); padding: 10px; border-radius: 8px; margin-bottom: 8px; border-left: 3px solid var(--c); cursor: pointer; transition: 0.2s; }
-        .top-item:hover { background: rgba(255,255,255,0.05); transform: translateX(-5px); }
-
-        .input-card { width: 100%; background: var(--card-bg); padding: 25px; border-radius: 20px; margin-bottom: 40px; box-sizing: border-box; border: 1px solid rgba(255,255,255,0.05); transition: 0.3s; }
-        .input-card.drag-over { border: 2px dashed var(--accent); background: rgba(125, 95, 255, 0.1); transform: scale(1.01); }
-        
-        input, textarea { width: 100%; background: rgba(0,0,0,0.5); border: 1px solid #333; padding: 12px; margin-bottom: 12px; border-radius: 10px; color: white; box-sizing: border-box; font-family: inherit; font-size: 0.9rem; }
-        input:focus, textarea:focus { border-color: var(--accent); outline: none; }
-        
-        .send-btn { width: 100%; padding: 14px; background: white; color: black; border: none; font-weight: 900; border-radius: 10px; cursor: pointer; text-transform: uppercase; flex: 1; transition: 0.2s; }
-        .send-btn:hover { background: #ddd; transform: translateY(-2px); }
-        .poll-trigger-btn { padding: 0 20px; background: var(--accent); color: white; border: none; border-radius: 10px; cursor: pointer; font-size: 1.2rem; display: flex; align-items: center; justify-content: center; transition: 0.2s; }
-        .poll-trigger-btn:hover { filter: brightness(1.2); }
-
-        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); backdrop-filter: blur(5px); z-index: 2000; display: none; justify-content: center; align-items: center; }
-        .modal-box { background: #0f0f19; padding: 30px; border-radius: 24px; width: 90%; max-width: 400px; border: 1px solid var(--accent); box-shadow: 0 20px 50px rgba(0,0,0,0.5); }
-        
-        .add-opt-btn { background: none; border: 1px dashed #555; color: #aaa; width: 100%; padding: 10px; border-radius: 8px; cursor: pointer; margin-bottom: 15px; font-family: inherit; transition: 0.2s; }
-        .add-opt-btn:hover { border-color: white; color: white; background: rgba(255,255,255,0.05); }
-
-        .comment-thread { width: 100%; margin-bottom: 25px; animation: fadeIn 0.5s ease; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        
-        .message { background: var(--card-bg); padding: 22px; border-radius: 20px; border: 2px solid var(--u-color); width: 100%; box-sizing: border-box; position: relative; }
-        .u-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
-        .u-name { color: var(--u-color); font-weight: 900; font-size: 0.85rem; text-transform: uppercase; }
-        .u-time { font-size: 0.7rem; color: #666; font-weight: bold; }
-        .u-msg { color: #fff; font-size: 1rem; line-height: 1.6; white-space: pre-wrap; margin-bottom: 15px; }
-
-        .media-preview-box { text-align: center; margin-bottom: 15px; display: none; background: rgba(0,0,0,0.2); padding: 15px; border-radius: 15px; border: 2px dashed #444; }
-        .media-preview-box img, .media-preview-box video { max-width: 100%; max-height: 250px; border-radius: 10px; }
-        
-        .u-media { text-align: center; margin-bottom: 15px; }
-        .u-media img, .u-media video { max-width: 100%; max-height: 450px; border-radius: 15px; border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
-
-        .actions { display: flex; gap: 15px; margin-top: 15px; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 15px; flex-wrap: wrap; align-items: center; }
-        .vote-btn { background: none; border: none; color: #666; cursor: pointer; font-size: 0.85rem; font-weight: bold; transition: 0.2s; }
-        .voted-up { color: var(--kick); text-shadow: 0 0 10px rgba(83, 252, 24, 0.3); }
-        .voted-down { color: var(--yt); text-shadow: 0 0 10px rgba(255, 0, 0, 0.3); }
-        .voted-tomato { color: var(--tomato); text-shadow: 0 0 10px rgba(255, 77, 77, 0.3); }
-        
-        .action-link { color: var(--accent); cursor: pointer; font-size: 0.8rem; font-weight: bold; transition: 0.2s; }
-        .action-link:hover { filter: brightness(1.3); text-decoration: underline; }
-
-        .delete-btn { display: none; color: #ff4d4d; cursor: pointer; font-size: 0.9rem; font-weight: bold; margin-left: auto; transition: 0.2s; }
-        .delete-btn:hover { filter: brightness(1.3); transform: scale(1.1); }
-        body.admin-mode .delete-btn { display: inline-block; }
-
-        .replies-container { margin-left: 30px; border-left: 2px solid #1a1a1a; padding-left: 20px; margin-top: 15px; }
-        .reply-box { display: none; margin-bottom: 15px; }
-        .reply-box.active { display: flex; gap: 5px; animation: fadeIn 0.3s ease; }
-        .replies-list { display: none; }
-        .replies-list.active { display: block; animation: fadeIn 0.3s ease; }
-
-        .highlight-active { animation: highlight-msg 1.5s ease-out; }
-        @keyframes highlight-msg { 0% { box-shadow: 0 0 0px transparent; } 50% { box-shadow: 0 0 30px var(--u-color); transform: scale(1.02); } 100% { box-shadow: 0 0 0px transparent; } }
-
-        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 999; display: none; }
-        .overlay.active { display: block; }
-
-        .loading-text { text-align: center; color: var(--accent); font-weight: bold; padding: 30px; animation: pulse 1s infinite; }
-        @keyframes pulse { 0% { opacity: 0.4; } 50% { opacity: 1; } 100% { opacity: 0.4; } }
-
-        /* =========================================
-           ESTILOS DEL HUB N_LAND (NUEVOS)
-        ========================================= */
-        #hub-principal {
+        /* Navegación */
+        .nav-overlay {
+            height: 100%; width: 0; position: fixed; z-index: 200; top: 0; right: 0;
+            background-color: var(--overlay); overflow-x: hidden; transition: 0.5s;
             display: flex; flex-direction: column; align-items: center; justify-content: center;
-            min-height: 85vh; z-index: 10; text-align: center; width: 100%; max-width: 800px; margin: auto;
         }
-        .mc-title {
-            font-family: 'Black Ops One', cursive;
-            font-size: clamp(3rem, 10vw, 6rem);
-            color: #53fc18;
-            text-shadow: 0 0 20px rgba(83, 252, 24, 0.5), 5px 5px 0px #111;
-            margin: 0 0 10px 0;
-            line-height: 1;
+        .nav-overlay a {
+            padding: 15px; text-decoration: none; font-size: 25px; color: #f1f1f1;
+            display: block; transition: 0.3s; font-weight: bold;
         }
-        .mc-version {
-            font-size: 1.2rem; font-weight: bold; color: #fff;
-            background: rgba(0,0,0,0.6); padding: 8px 20px; border-radius: 20px;
-            margin-bottom: 30px; border: 1px solid #53fc18;
-        }
-        .ip-box {
-            background: rgba(0,0,0,0.7); padding: 20px 40px; border: 2px dashed #53fc18;
-            display: inline-block; font-family: monospace; font-size: 1.8rem;
-            cursor: pointer; transition: 0.3s; margin-bottom: 30px; border-radius: 10px;
-        }
-        .ip-box:hover { background: rgba(83, 252, 24, 0.2); }
-        .ip-box span { display: block; font-size: 0.8rem; color: #aaa; margin-top: 5px; }
+        .nav-overlay a:hover { color: var(--accent); }
 
-        .btn-mods {
-            background: #00b2e1; color: white; padding: 15px 30px; text-decoration: none;
-            border-radius: 10px; font-weight: 900; font-size: 1.2rem;
-            text-transform: uppercase; display: inline-block; margin-bottom: 15px; transition: 0.3s;
+        /* Contenido Principal */
+        .main-container {
+            display: flex; flex-direction: column; align-items: center;
+            justify-content: center; height: 100vh; background: rgba(0,0,0,0.5);
         }
-        .btn-mods:hover { background: #0091b5; transform: scale(1.05); }
-
-        .instrucciones {
-            background: rgba(0,0,0,0.5); padding: 20px; border-radius: 15px;
-            max-width: 500px; font-size: 0.95rem; color: #ccc; margin-bottom: 40px;
-            text-align: left; border: 1px solid rgba(255,255,255,0.1);
+        h1 { font-size: 4rem; margin: 0; color: var(--accent); text-shadow: 0 0 20px rgba(83, 252, 24, 0.5); }
+        
+        .box {
+            background: rgba(15, 15, 20, 0.9); padding: 40px; border-radius: 15px;
+            text-align: center; border: 1px solid #333; max-width: 500px;
         }
-
-        .btn-abrir-comentarios {
-            background: var(--yt); color: white; padding: 15px 40px; border: none;
-            border-radius: 50px; font-size: 1.2rem; font-weight: bold; cursor: pointer;
-            box-shadow: 0 5px 15px rgba(255,0,0,0.4); transition: 0.3s; margin-top: 20px;
-        }
-        .btn-abrir-comentarios:hover { transform: translateY(-3px); filter: brightness(1.2); }
-
-        /* =========================================
-           CONTENEDOR DE COMENTARIOS OCULTO
-        ========================================= */
-        #seccion-comentarios {
-            display: none; position: absolute; top: 0; left: 0; width: 100%; min-height: 100vh;
-            background: var(--bg); z-index: 500; padding: 60px 20px 20px; box-sizing: border-box;
-        }
-        .btn-cerrar-comentarios {
-            position: fixed; top: 20px; left: 20px; background: #333; color: white;
-            border: none; padding: 10px 20px; border-radius: 10px; cursor: pointer;
-            font-weight: bold; z-index: 1501; transition: 0.3s;
-        }
-        .btn-cerrar-comentarios:hover { background: #555; }
     </style>
 </head>
 <body>
 
-<div class="orb orb-1"></div><div class="orb orb-2"></div>
-
-<div id="hub-principal">
-    <h1 class="mc-title">N_LAND</h1>
-    <div class="mc-version">Minecraft Java 1.20.1</div>
-    
-    <div class="ip-box" onclick="copyIP()">
-        <b>N_LAND.aternos.me:20942</b>
-        <span>(Click para copiar la IP)</span>
-    </div>
-
-    <a href="https://www.mediafire.com/file/q676fxngf4yeaud/Minecraft.rar/file" target="_blank" class="btn-mods">
-        📦 Descargar Mods y Emotes
-    </a>
-    
-    <div class="instrucciones">
-        <b>¿Cómo instalar los mods?</b><br><br>
-        1. Descarga el archivo <b>.rar</b> del botón azul.<br>
-        2. Descomprime el archivo y copia todo lo que está dentro.<br>
-        3. Pégalo en tu carpeta <code>.minecraft/mods</code>.<br>
-        4. ¡Abre el juego y entra al server!
-    </div>
-
-    <div class="social-links">
-        <a href="https://kick.com/luisardito" target="_blank" class="social-btn btn-kick">Kick</a>
-        <a href="https://www.youtube.com/@Luisarditoprime" target="_blank" class="social-btn btn-yt">YouTube</a>
-        <a href="https://www.instagram.com/luisarditooo" target="_blank" class="social-btn btn-ig">Instagram</a>
-    </div>
-
-    <button class="btn-abrir-comentarios" onclick="toggleComentariosModal()">
-        💬 ABRIR CHAT / CRÍTICAS
-    </button>
+<div class="menu-btn" onclick="openNav()">
+    <div></div><div></div><div></div>
 </div>
 
-<div id="seccion-comentarios">
-    <button class="btn-cerrar-comentarios" onclick="toggleComentariosModal()">❌ VOLVER A N_LAND</button>
-    
-    <div class="menu-toggle" onclick="toggleMenu()"><span></span><span></span><span></span></div>
-    <div class="overlay" id="overlay" onclick="toggleMenu()"></div>
-
-    <div id="imgViewer" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); z-index:9999; justify-content:center; align-items:center; cursor:zoom-out;" onclick="this.style.display='none'">
-        <img id="imgViewerTarget" style="width:90vw; height:90vh; object-fit:contain; border-radius:15px; box-shadow:0 10px 50px rgba(0,0,0,0.8);">
-    </div>
-
-    <div class="top-section" id="topSection">
-        <h2 style="text-align: center; font-size: 0.9rem; letter-spacing: 4px; margin-bottom: 30px;">RANKING</h2>
-        <div class="top-box"><h3>Mejor Valorado 👍</h3><div id="top-likes"></div></div>
-        <div class="top-box"><h3>Más Odiado 💀</h3><div id="top-dislikes"></div></div>
-        <div class="top-box"><h3>Tomateada 🍅</h3><div id="top-tomates"></div></div>
-    </div>
-
-    <div class="modal-overlay" id="pollModal">
-        <div class="modal-box">
-            <h3 style="margin-top: 0; color: white; text-align: center;">Crear Encuesta 📊</h3>
-            <input type="text" id="pollUsername" placeholder="Tu Nickname...">
-            <input type="text" id="pollTheme" placeholder="¿Qué quieres preguntar?">
-            <div id="pollOptionsContainer">
-                <input type="text" class="p-opt" placeholder="Opción 1">
-                <input type="text" class="p-opt" placeholder="Opción 2">
-            </div>
-            <button class="add-opt-btn" id="btnAddOption" onclick="addPollOption()">+ Añadir opción</button>
-            <div style="display: flex; gap: 10px;">
-                <button class="send-btn" onclick="closePollModal()" style="background: #222; color: white;">Cerrar</button>
-                <button class="send-btn" onclick="sendPollDirect()" style="background: var(--accent); color: white;">Lanzar</button>
-            </div>
-        </div>
-    </div>
-
-    <div class="container" style="margin: 0 auto;">
-        <header style="text-align: center; margin-bottom: 20px;">
-            <h1 class="logo">POXY TRASH</h1>
-            <p style="color: #aaa;">Solo críticas al contenido. Compórtate o el server cierra.</p>
-        </header>
-
-        <div class="input-card" id="dropZone">
-            <input type="text" id="username" placeholder="Nickname...">
-            <textarea id="commentText" rows="3" placeholder="Escribe tu comentario o arrastra un archivo aquí..."></textarea>
-            
-            <div id="mediaPreview" class="media-preview-box"></div>
-            <input type="file" id="fileInput" accept="image/*,video/mp4,video/webm" style="display:none;" onchange="handleFileSelect(event)">
-
-            <div style="display: flex; gap: 10px;">
-                <button class="poll-trigger-btn" onclick="openPollModal()" title="Encuesta">📊</button>
-                <button class="poll-trigger-btn" onclick="document.getElementById('fileInput').click()" title="Adjuntar">📁</button>
-                <button class="send-btn" onclick="addComment(null)">COMENTA PAPU</button>
-            </div>
-        </div>
-
-        <div id="comments-list" style="width: 100%;">
-            <div id="loader" class="loading-text">Cargando... ⏳</div>
-        </div>
-    </div>
+<div id="myNav" class="nav-overlay">
+    <a href="javascript:void(0)" onclick="closeNav()" style="position:absolute; top:20px; right:20px;">✕</a>
+    <a href="#" onclick="showSection('ip')">IP DEL SERVIDOR</a>
+    <a href="#" onclick="showSection('mods')">DESCARGAR MODS</a>
+    <a href="#" onclick="showSection('desc')">DESCRIPCIÓN</a>
 </div>
 
-<script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-database-compat.js"></script>
+<div class="main-container">
+    <div class="box" id="content">
+        <h1>N_LAND</h1>
+        <p>Bienvenido al hub oficial del servidor.</p>
+        <p id="dynamic-text">Selecciona una opción en el menú superior.</p>
+    </div>
+</div>
 
 <script>
-    // Configuración de Firebase
-    const firebaseConfig = {
-        apiKey: "AIzaSyD3eXkFJHg7YbPUR5xsdU8JUooG-r1-zPg",
-        authDomain: "q-opinas-de-luis.firebaseapp.com",
-        databaseURL: "https://q-opinas-de-luis-default-rtdb.firebaseio.com",
-        projectId: "q-opinas-de-luis"
-    };
-    firebase.initializeApp(firebaseConfig);
-    const database = firebase.database();
-    
-    // ==========================================
-    // NUEVAS FUNCIONES PARA EL HUB
-    // ==========================================
-    function copyIP() {
-        navigator.clipboard.writeText("N_LAND.aternos.me:20942");
-        alert("¡IP N_LAND.aternos.me:20942 copiada al portapapeles!");
-    }
+    function openNav() { document.getElementById("myNav").style.width = "100%"; }
+    function closeNav() { document.getElementById("myNav").style.width = "0%"; }
 
-    function toggleComentariosModal() {
-        const modal = document.getElementById('seccion-comentarios');
-        const hub = document.getElementById('hub-principal');
-        if (modal.style.display === 'block') {
-            modal.style.display = 'none';
-            hub.style.display = 'flex';
-            window.scrollTo(0,0);
-        } else {
-            modal.style.display = 'block';
-            hub.style.display = 'none';
-        }
-    }
-    // ==========================================
-
-    const colors = ['#00f2fe', '#4facfe', '#7d5fff', '#f5576c', '#43e97b', '#fe019a', '#00ffcc', '#ffffff', '#ffaa00', '#ffea00', '#ff0055', '#8a2be2', '#00ff00', '#ff4500', '#1e90ff', '#ff1493', '#adff2f', '#00ced1', '#ffb6c1', '#f0e68c', '#dda0dd', '#ff99cc', '#7cfc00', '#00bfff', '#ff6347', '#ffff00', '#ff8c00', '#ba55d3', '#32cd32', '#00fa9a'];
-    const initTime = Date.now();
-    let currentMediaData = null;
-    let currentMediaType = null;
-
-    if (localStorage.getItem('nala_admin') === 'true') {
-        document.body.classList.add('admin-mode');
-    }
-
-    function tiempoRelativo(fecha) {
-        if(!fecha) return "";
-        const diff = Math.floor((Date.now() - fecha) / 1000);
-        if (diff < 60) return `ahora`;
-        if (diff < 3600) return `hace ${Math.floor(diff / 60)}m`;
-        if (diff < 86400) return `hace ${Math.floor(diff / 3600)}h`;
-        return `hace ${Math.floor(diff / 86400)}d`;
-    }
-
-    function toggleMenu() {
-        document.getElementById('topSection').classList.toggle('active');
-        document.getElementById('overlay').classList.toggle('active');
-    }
-
-    function toggleReplyBox(id) { document.getElementById(`reply-box-${id}`).classList.toggle('active'); }
-    function toggleRepliesList(id) { document.getElementById(`replies-list-${id}`).classList.toggle('active'); }
-
-    function enlargeImage(src) {
-        document.getElementById('imgViewerTarget').src = src;
-        document.getElementById('imgViewer').style.display = 'flex';
-    }
-
-    const dropZone = document.getElementById('dropZone');
-    dropZone.addEventListener('dragover', (e) => { e.preventDefault(); dropZone.classList.add('drag-over'); });
-    dropZone.addEventListener('dragleave', (e) => { e.preventDefault(); dropZone.classList.remove('drag-over'); });
-    dropZone.addEventListener('drop', (e) => {
-        e.preventDefault(); dropZone.classList.remove('drag-over');
-        if(e.dataTransfer.files.length > 0) processFile(e.dataTransfer.files[0]);
-    });
-    function handleFileSelect(e) { if(e.target.files.length > 0) processFile(e.target.files[0]); }
-
-    function processFile(file) {
-        if (file.size > 15 * 1024 * 1024) return alert("El archivo supera los 15MB.");
-        const isVideo = file.type.startsWith('video');
-        currentMediaType = isVideo ? 'video' : 'image';
-        const reader = new FileReader();
-        reader.onload = (e) => {
-            currentMediaData = e.target.result;
-            const pb = document.getElementById('mediaPreview');
-            pb.style.display = 'block';
-            pb.innerHTML = isVideo ? `<video src="${currentMediaData}" controls></video>` : `<img src="${currentMediaData}">`;
-            pb.innerHTML += `<br><button onclick="clearMedia()" style="background:red; color:white; border:none; padding:5px 10px; border-radius:5px; margin-top:10px; cursor:pointer;">Quitar archivo</button>`;
-        };
-        reader.readAsDataURL(file);
-    }
-
-    function clearMedia() {
-        currentMediaData = null; currentMediaType = null;
-        const pb = document.getElementById('mediaPreview');
-        pb.style.display = 'none'; pb.innerHTML = '';
-        document.getElementById('fileInput').value = '';
-    }
-
-    function openPollModal() { document.getElementById('pollModal').style.display = 'flex'; }
-    function closePollModal() { document.getElementById('pollModal').style.display = 'none'; }
-    
-    function addPollOption() {
-        const container = document.getElementById('pollOptionsContainer');
-        if (container.children.length < 4) {
-            const input = document.createElement('input');
-            input.type = "text"; input.className = "p-opt"; input.placeholder = `Opción ${container.children.length + 1}`;
-            container.appendChild(input);
-        }
-    }
-
-    function sendPollDirect() {
-        const user = document.getElementById('pollUsername').value.trim();
-        const theme = document.getElementById('pollTheme').value.trim();
-        const optionInputs = document.querySelectorAll('.p-opt');
-        let validOptions = {}; let index = 0;
-        optionInputs.forEach(input => {
-            if (input.value.trim() !== "") {
-                validOptions[`opt_${index}`] = { texto: input.value.trim(), votos: 0 };
-                index++;
-            }
-        });
-        if (index < 2) return alert("Mínimo 2 opciones.");
-        database.ref('comentarios').push({ autor: user || "Anónimo", mensaje: "", parentId: null, encuesta: { pregunta: theme || "Encuesta", opciones: validOptions }, media: null, mediaType: null, color: colors[Math.floor(Math.random() * colors.length)], likes: 0, dislikes: 0, tomates: 0, fecha: Date.now() });
-        closePollModal();
-    }
-
-    function votePollOption(msgId, optKey) {
-        const localKey = `pollVoted_${msgId}`;
-        if (localStorage.getItem(localKey)) { alert("Ya votaste aquí, chistoso."); return; }
-        database.ref(`comentarios/${msgId}/encuesta/opciones/${optKey}/votos`).transaction(v => (v || 0) + 1);
-        localStorage.setItem(localKey, 'true');
-    }
-
-    function addComment(parentId = null) {
-        const userInput = parentId ? document.getElementById(`user-${parentId}`) : document.getElementById('username');
-        const textInput = parentId ? document.getElementById(`text-${parentId}`) : document.getElementById('commentText');
-        const user = userInput.value.trim();
-        const text = textInput.value.trim();
-        const media = parentId ? null : currentMediaData;
-        const mType = parentId ? null : currentMediaType;
-
-        if (text === "/nala_admin") {
-            localStorage.setItem('nala_admin', 'true');
-            document.body.classList.add('admin-mode');
-            textInput.value = "";
-            alert("🔥 MODO DIOS ACTIVADO: Ahora ves los tachos de basura.");
-            return;
-        }
-        if (text === "/nala_salir") {
-            localStorage.removeItem('nala_admin');
-            document.body.classList.remove('admin-mode');
-            textInput.value = "";
-            alert("Modo Dios Desactivado.");
-            return;
-        }
+    function showSection(type) {
+        const content = document.getElementById('dynamic-text');
+        const box = document.getElementById('content');
         
-        if (user === "ADMIN_NALA" && text === "RESETEAR") { database.ref('comentarios').remove(); return; }
-        if (!text && !media) return;
-
-        database.ref('comentarios').push({ 
-            autor: user || "Anónimo", 
-            mensaje: text, 
-            parentId: parentId, 
-            encuesta: null, 
-            media: media, 
-            mediaType: mType, 
-            color: colors[Math.floor(Math.random() * colors.length)], 
-            likes: 0, dislikes: 0, tomates: 0, 
-            fecha: Date.now() 
-        });
-
-        if(!parentId) { textInput.value = ""; clearMedia(); } else { textInput.value = ""; }
-    }
-
-    function deleteComment(id) {
-        if (confirm("¿Seguro que quieres borrar esta webada?")) {
-            database.ref('comentarios/' + id).remove();
-        }
-    }
-
-    function handleVote(msgId, voteType) {
-        const myVote = localStorage.getItem('v_' + msgId);
-        if (myVote === voteType) {
-            database.ref(`comentarios/${msgId}/${voteType}`).transaction(c => (c || 1) - 1);
-            localStorage.removeItem('v_' + msgId);
+        if(type === 'ip') {
+            content.innerHTML = "<b>IP:</b> N_LAND.aternos.me:20942<br><small>(Click para copiar)</small>";
+            content.style.cursor = "pointer";
+            content.onclick = () => { navigator.clipboard.writeText("N_LAND.aternos.me:20942"); alert("IP copiada"); };
+        } else if(type === 'mods') {
+            content.innerHTML = "<a href='#' style='color:var(--accent)'>Click aquí para bajar el .rar de mods</a>";
         } else {
-            if (myVote) database.ref(`comentarios/${msgId}/${myVote}`).transaction(c => (c || 1) - 1);
-            database.ref(`comentarios/${msgId}/${voteType}`).transaction(c => (c || 0) + 1);
-            localStorage.setItem('v_' + msgId, voteType);
+            content.innerHTML = "Un servidor de Minecraft para la comunidad. ¡Diviértete!";
         }
-    }
-
-    function drawPoll(msgId, encuesta) {
-        if (!encuesta) return "";
-        const total = Object.values(encuesta.opciones).reduce((a, b) => a + (b.votos || 0), 0);
-        let html = `<div class="poll-inner-box" style="background:rgba(0,0,0,0.3); padding:15px; border-radius:10px; margin:10px 0;"><b>${encuesta.pregunta}</b><br>`;
-        for (let k in encuesta.opciones) {
-            const opt = encuesta.opciones[k];
-            const p = total > 0 ? Math.round((opt.votos/total)*100) : 0;
-            html += `<div style="background:rgba(255,255,255,0.05); margin:5px 0; padding:8px; border-radius:5px; position:relative; cursor:pointer;"
-            onclick="votePollOption('${msgId}', '${k}')">
-                <div style="background:var(--accent); position:absolute; left:0; top:0; height:100%; width:${p}%; opacity:0.2; transition:0.3s;"></div>
-                <div style="position:relative; display:flex; justify-content:space-between; font-size:0.9rem;"><span>${opt.texto}</span><span>${p}% (${opt.votos || 0})</span></div>
-            </div>`;
-        }
-        html += `</div>`;
-        return html;
-    }
-
-    database.ref('comentarios').on('child_removed', (snapshot) => {
-        const post = snapshot.val();
-        if(!post.parentId) {
-            const thread = document.getElementById(`thread-${snapshot.key}`);
-            if (thread) thread.remove();
-        } else {
-            const reply = document.getElementById(`reply-msg-${snapshot.key}`);
-            if (reply) reply.remove();
-        }
-    });
-
-    database.ref('comentarios').on('child_added', (snapshot) => {
-        const loader = document.getElementById('loader');
-        if (loader) loader.style.display = 'none';
-
-        const post = snapshot.val();
-        post.id = snapshot.key;
-        
-        if (!post.parentId) {
-            const list = document.getElementById('comments-list');
-            const threadDiv = document.createElement('div');
-            threadDiv.className = 'comment-thread';
-            threadDiv.id = `thread-${post.id}`;
-            
-            const myVote = localStorage.getItem('v_' + post.id);
-            const mediaHtml = post.media ? (post.mediaType === 'video' ? `<div class="u-media"><video src="${post.media}" controls></video></div>` : `<div class="u-media"><img src="${post.media}" onclick="enlargeImage('${post.media}')" style="cursor:zoom-in;" title="Click para agrandar"></div>`) : "";
-            
-            threadDiv.innerHTML = `
-                <div class="message" id="msg-${post.id}" style="--u-color: ${post.color}">
-                    <div class="u-header">
-                        <span class="u-name">${post.autor}</span>
-                        <span class="u-time">${tiempoRelativo(post.fecha)}</span>
-                    </div>
-                    ${post.mensaje ? `<div class="u-msg">${post.mensaje.replace(/</g, "&lt;")}</div>` : ''}
-                    ${mediaHtml}
-                    <div id="poll-ui-${post.id}">${drawPoll(post.id, post.encuesta)}</div>
-                    <div class="actions">
-                        <button class="vote-btn btn-l ${myVote==='likes'?'voted-up':''}" onclick="handleVote('${post.id}','likes')">👍 <span>${post.likes||0}</span></button>
-                        <button class="vote-btn btn-d ${myVote==='dislikes'?'voted-down':''}" onclick="handleVote('${post.id}','dislikes')">👎 <span>${post.dislikes||0}</span></button>
-                        <button class="vote-btn btn-t ${myVote==='tomates'?'voted-tomato':''}" onclick="handleVote('${post.id}','tomates')">🍅 <span>${post.tomates||0}</span></button>
-                        <span class="action-link" onclick="toggleReplyBox('${post.id}')">💬 Responder</span>
-                        <span class="action-link" onclick="toggleRepliesList('${post.id}')">👁️ Respuestas (<span id="count-${post.id}">0</span>)</span>
-                        <span class="delete-btn" onclick="deleteComment('${post.id}')" title="Borrar Comentario">🗑️</span>
-                    </div>
-                </div>
-                <div class="replies-container" id="replies-${post.id}">
-                    <div class="reply-box" id="reply-box-${post.id}">
-                        <input type="text" id="user-${post.id}" placeholder="Nick..." style="flex:1;">
-                        <input type="text" id="text-${post.id}" placeholder="Escribe algo..." style="flex:2;">
-                        <button onclick="addComment('${post.id}')" style="background:var(--accent); border:none; color:white; border-radius:5px; padding:0 15px; cursor:pointer;">↑</button>
-                    </div>
-                    <div class="replies-list" id="replies-list-${post.id}"></div>
-                </div>`;
-            list.prepend(threadDiv);
-        } else {
-            const rList = document.getElementById(`replies-list-${post.parentId}`);
-            if(rList) {
-                const rDiv = document.createElement('div');
-                rDiv.id = `reply-msg-${post.id}`;
-                rDiv.innerHTML = `<div class="message" style="--u-color:#444; margin-top:10px; padding:10px; border-width:1px; position:relative;">
-                    <div class="u-header"><span class="u-name" style="font-size:0.7rem;">${post.autor}</span></div>
-                    <div class="u-msg" style="font-size:0.85rem; margin:0; display:flex; justify-content:space-between; align-items:center;">
-                        <span>${post.mensaje}</span>
-                        <span class="delete-btn" onclick="deleteComment('${post.id}')" title="Borrar Respuesta">🗑️</span>
-                    </div>
-                </div>`;
-                rList.appendChild(rDiv);
-                
-                const counter = document.getElementById(`count-${post.parentId}`);
-                if(counter) counter.innerText = parseInt(counter.innerText) + 1;
-            }
-        }
-    });
-
-    database.ref('comentarios').on('child_changed', (snapshot) => {
-        const post = snapshot.val();
-        post.id = snapshot.key;
-        const msgEl = document.getElementById(`msg-${post.id}`);
-        if(msgEl) {
-            const pollUi = document.getElementById(`poll-ui-${post.id}`);
-            if (pollUi && post.encuesta) pollUi.innerHTML = drawPoll(post.id, post.encuesta);
-
-            const myVote = localStorage.getItem('v_' + post.id);
-            const bL = msgEl.querySelector('.btn-l');
-            const bD = msgEl.querySelector('.btn-d');
-            const bT = msgEl.querySelector('.btn-t');
-            bL.querySelector('span').innerText = post.likes || 0;
-            bD.querySelector('span').innerText = post.dislikes || 0;
-            bT.querySelector('span').innerText = post.tomates || 0;
-            bL.className = `vote-btn btn-l ${myVote==='likes'?'voted-up':''}`;
-            bD.className = `vote-btn btn-d ${myVote==='dislikes'?'voted-down':''}`;
-            bT.className = `vote-btn btn-t ${myVote==='tomates'?'voted-tomato':''}`;
-        }
-    });
-
-    let debounceTimer;
-    database.ref('comentarios').on('value', (snapshot) => {
-        clearTimeout(debounceTimer);
-        debounceTimer = setTimeout(() => {
-            const allData = [];
-            const replyCounts = {};
-
-            snapshot.forEach(child => { 
-                const d = child.val(); 
-                d.id = child.key; 
-                allData.push(d); 
-                if(d.parentId) {
-                    replyCounts[d.parentId] = (replyCounts[d.parentId] || 0) + 1;
-                }
-            });
-
-            for (let parentId in replyCounts) {
-                const counter = document.getElementById(`count-${parentId}`);
-                if (counter) counter.innerText = replyCounts[parentId];
-            }
-            
-            updateTop('top-likes', allData, 'likes', '👍');
-            updateTop('top-dislikes', allData, 'dislikes', '💀');
-            updateTop('top-tomates', allData, 'tomates', '🍅');
-            
-            const loader = document.getElementById('loader');
-            if (loader && allData.length === 0) loader.style.display = 'none';
-        }, 300);
-    });
-
-    function updateTop(elId, arr, field, icon) {
-        const container = document.getElementById(elId);
-        const maxVal = arr.length ? Math.max(...arr.map(m => m[field] || 0)) : 0;
-        const filtered = arr.filter(m => (m[field] || 0) === maxVal && maxVal >= 1).slice(0, 3);
-        container.innerHTML = filtered.length ? "" : "...";
-        filtered.forEach(m => {
-            const item = document.createElement('div');
-            item.className = 'top-item'; item.style.setProperty('--c', m.color);
-            let pt = m.mensaje ? m.mensaje.substring(0, 15) + '...' : (m.mediaType === 'video' ? '(Video)' : (m.mediaType === 'image' ? '(Imagen)' : (m.encuesta ? 'Encuesta...' : '...')));
-            item.innerHTML = `${icon} <b>${m.autor}</b>: ${pt}`;
-            
-            item.onclick = () => {
-                const target = document.getElementById('msg-' + m.id);
-                if (target) { toggleMenu(); target.scrollIntoView({ behavior: 'smooth', block: 'center' }); target.classList.add('highlight-active'); setTimeout(() => target.classList.remove('highlight-active'), 2000); }
-            };
-            container.appendChild(item);
-        });
+        closeNav();
     }
 </script>
+
 </body>
 </html>
