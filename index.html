@@ -22,6 +22,7 @@ box-sizing:border-box;
 
 html{
 scroll-behavior:smooth;
+scroll-padding-top:0;
 }
 
 body{
@@ -605,6 +606,10 @@ margin-bottom:10px;
 color:#111;
 }
 
+.rules-box ul{
+margin-top:16px;
+}
+
 /* MODS */
 
 .mods-toggle{
@@ -749,6 +754,103 @@ padding:40px 22px;
 }
 
 
+/* DETALLE: scanline en titlebar */
+.titlebar::after{
+content:"";
+position:absolute;
+inset:0;
+background:repeating-linear-gradient(
+  0deg,
+  transparent,
+  transparent 3px,
+  rgba(0,0,0,.04) 3px,
+  rgba(0,0,0,.04) 4px
+);
+pointer-events:none;
+border-radius:inherit;
+}
+
+.titlebar{
+position:relative;
+}
+
+/* DETALLE: cursor parpadeante en subtitle */
+.subtitle::after{
+content:"_";
+animation:blink .8s step-start infinite;
+color:#d60000;
+}
+
+@keyframes blink{
+0%,100%{opacity:1;}
+50%{opacity:0;}
+}
+
+/* DETALLE: glow suave en hover de social icons */
+.icon-kick:hover{box-shadow:0 0 18px rgba(83,252,24,.5);}
+.icon-yt:hover{box-shadow:0 0 18px rgba(255,0,0,.5);}
+.icon-ig:hover{box-shadow:0 0 18px rgba(188,24,136,.5);}
+
+/* DETALLE: borde izquierdo animado en update-item */
+.update-item{
+border-left:4px solid #0054e3;
+transition:border-color .3s ease;
+}
+.update-item:hover{
+border-left-color:#d60000;
+background:#f0f5ff;
+}
+
+/* NALA SPEECH BUBBLE */
+.nala-bubble{
+position:absolute;
+bottom:calc(100% + 14px);
+right:0;
+width:200px;
+background:#fffde7;
+border:2px solid #333;
+border-radius:14px;
+padding:12px 14px;
+font-family:'VT323',monospace;
+font-size:1.25rem;
+color:#111;
+line-height:1.4;
+text-align:left;
+pointer-events:none;
+opacity:0;
+transform:translateY(8px) scale(.95);
+transform-origin:bottom right;
+transition:opacity .22s ease, transform .22s ease;
+box-shadow:3px 3px 0 rgba(0,0,0,.18);
+z-index:100001;
+}
+
+.nala-bubble::after{
+content:"";
+position:absolute;
+bottom:-12px;
+right:22px;
+border-width:12px 10px 0 10px;
+border-style:solid;
+border-color:#333 transparent transparent transparent;
+}
+
+.nala-bubble::before{
+content:"";
+position:absolute;
+bottom:-9px;
+right:23px;
+border-width:11px 9px 0 9px;
+border-style:solid;
+border-color:#fffde7 transparent transparent transparent;
+z-index:1;
+}
+
+.nala-bubble.visible{
+opacity:1;
+transform:translateY(0) scale(1);
+}
+
 /* NALA CORNER WIDGET */
 .nala-corner{
 position:fixed;
@@ -887,10 +989,6 @@ bottom:14px;
 
 <p class="subtitle">
 Servidor survival humilde con mods
-</p>
-
-<p class="hero-text">
-survival con mods
 </p>
 
 <button class="enter-btn" onclick="document.getElementById('server').scrollIntoView({behavior:'smooth'})">
@@ -1143,8 +1241,6 @@ pero igual se intenta 👍
 
 <h2>REGLAS</h2>
 
-<br>
-
 <ul>
 <li>No explotar casas.</li>
 <li>No matar ajolotes.</li>
@@ -1211,6 +1307,12 @@ function closeUpdates(){
 document.getElementById("updatesPopup").classList.remove("active");
 }
 
+document.getElementById("updatesPopup").addEventListener("click", function(e){
+if(e.target === this){
+closeUpdates();
+}
+});
+
 const sections=document.querySelectorAll("section");
 
 const observer=new IntersectionObserver(entries=>{
@@ -1258,26 +1360,98 @@ particles.appendChild(pixel);
 
 
 <div class="nala-corner" id="nalaCorner" aria-label="Nala">
+  <div class="nala-bubble" id="nalaBubble"></div>
   <img id="nalaImg" src="nala_1.png" alt="Nala">
 </div>
 
 
 <script>
 
-// NALA CORNER SWAP
+// ── SCROLL AL INICIO AL RECARGAR ──
+if ('scrollRestoration' in history) {
+  history.scrollRestoration = 'manual';
+}
+window.addEventListener('beforeunload', () => {
+  window.scrollTo(0, 0);
+});
+window.addEventListener('load', () => {
+  setTimeout(() => window.scrollTo({top: 0, behavior: 'instant'}), 0);
+});
+
+// ── NALA CORNER ──
 const nalaCorner = document.getElementById("nalaCorner");
-const nalaImg = document.getElementById("nalaImg");
+const nalaImg    = document.getElementById("nalaImg");
+const nalaBubble = document.getElementById("nalaBubble");
 const nala1 = "nala_1.png";
 const nala2 = "nala_2.png";
 
+const nalaLines = [
+  "👁 Estoy observandote...",
+  "⚔ El nether sigue cerrado. Por ahora.",
+  "🍰 Lacobraa usó el poder del queque. Cobarde.",
+  "🐾 No mates ajolotes o te las verás conmigo.",
+  "📡 N_LAND.aternos.me:20942",
+  "🌑 Volveré. Solo es cuestión de tiempo.",
+  "🚪 Entraste. Interesante decisión.",
+  "🎮 Instala los mods o no entras.",
+  "👋 Bienvenido a N_LAND, mortal.",
+  "🌌 Desde aquí lo veo todo igual.",
+  "✨ Este mundo tiene más secretos de los que crees.",
+  "🌍 Este mundo lo construí yo. Lo puedo destruir.",
+  "🌿 Cuida el mundo. Es tuyo también.",
+  "💫 El lag no es un bug. Soy yo pensando.",
+  "🎙 Si luis no prende significa que no hay directo.",
+  "💔 El vacio se siente deprimente...",
+];
+
+let bubbleTimeout = null;
+let currentIdx = -1;
+
+function getRandomLine() {
+  let idx;
+  do { idx = Math.floor(Math.random() * nalaLines.length); }
+  while (idx === currentIdx);
+  currentIdx = idx;
+  return nalaLines[idx];
+}
+
+function showBubble() {
+  nalaBubble.textContent = getRandomLine();
+  nalaBubble.classList.add("visible");
+}
+
+function hideBubble() {
+  nalaBubble.classList.remove("visible");
+}
+
 if (nalaCorner && nalaImg) {
   nalaImg.src = nala1;
+
   nalaCorner.addEventListener("mouseenter", () => {
     nalaImg.src = nala2;
+    clearTimeout(bubbleTimeout);
+    showBubble();
   });
+
   nalaCorner.addEventListener("mouseleave", () => {
     nalaImg.src = nala1;
+    bubbleTimeout = setTimeout(hideBubble, 400);
   });
+
+  // Click: nueva frase sin salir
+  nalaCorner.addEventListener("click", () => {
+    nalaBubble.classList.remove("visible");
+    void nalaBubble.offsetWidth; // reflow para reiniciar animación
+    showBubble();
+  });
+
+  // Aparecer sola de vez en cuando
+  setInterval(() => {
+    if (!nalaCorner.matches(":hover")) {
+      showBubble();
+      bubbleTimeout = setTimeout(hideBubble, 3200);
+    }
+  }, 18000);
 }
 
 </script>
